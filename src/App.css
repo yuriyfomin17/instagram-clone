@@ -1,5 +1,22 @@
-.App {
-  text-align: center;
+
+*{
+  /*Removes default margin in in react app*/
+  margin:0;
+}
+.app{
+  background-color: #fafafa;
+  height: 100vh;
+}
+.app_header{
+  background-color: white;
+  padding: 20px;
+  border-bottom: 1px solid lightgray;
+  /*keep the aspect ratio of the image constant. So it is not stretched*/
+  object-fit: contain;
+
+}
+.app_headerImage{
+  width: 120px;
 }
 
 
