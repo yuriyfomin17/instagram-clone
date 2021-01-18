@@ -13,6 +13,10 @@ function App() {
             </div>
             <h1> Instagram clone</h1>
             <Post/>
+            <Post/>
+
+            <Post/>
+
             {/*{Posts}*/}
             {/*{Posts}*/}
         </div>
