@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from "react";
 import './App.css'
 import instagramLogo from './static/instagram-logo.png'
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Post from "./Post";
 import {db} from './Firebse'
 import Modal from '@material-ui/core/Modal';
-import {Button} from "@material-ui/core";
+import {Button, Input} from "@material-ui/core";
 
 function getModalStyle() {
     const top = 50
@@ -17,6 +17,7 @@ function getModalStyle() {
         transform: `translate(-${top}%, -${left}%)`,
     };
 }
+
 const useStyles = makeStyles((theme) => ({
     paper: {
         position: 'absolute',
@@ -27,12 +28,20 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2, 4, 3),
     },
 }));
+
 function App() {
     const classes = useStyles();
     const [posts, setPosts] = useState([])
     const [open, setOpen] = useState(false)
     const [modalStyle] = useState(getModalStyle);
 
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('')
+
+    const signUp = (event) => {
+
+    }
 
     // useEffect runs specific code based on the specific condition
 
@@ -49,12 +58,46 @@ function App() {
         <div className="app">
             <Modal
                 open={open}
-                onClose={()=>setOpen(false)}
+                onClose={() => setOpen(false)}
 
             >
                 <div style={modalStyle} className={classes.paper}>
-                    <h2> I am model</h2>
+
+                    <form className="app_signup">
+                        <center>
+
+                            <img
+                                src={instagramLogo}
+                                className="app_headerImage"
+                                alt=""
+                            />
+                        </center>
+
+                        <Input
+                            placeholder="username"
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <Input
+                            placeholder="email"
+                            type="text"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <Input
+                            placeholder="password"
+                            type="text"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+
+                        <Button onClick={signUp}>Sign Up</Button>
+                    </form>
+
+
                 </div>
+
 
             </Modal>
 
@@ -62,9 +105,11 @@ function App() {
                 <img
                     src={instagramLogo}
                     className="app_headerImage"
+                    alt=""
                 />
+
             </div>
-            <Button onClick={()=>setOpen(true)}> Sign Up</Button>
+            <Button onClick={() => setOpen(true)}> Sign Up</Button>
             <h1> Instagram clone</h1>
             {
                 posts.map(({id, post}) => (
