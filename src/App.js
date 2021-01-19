@@ -214,7 +214,18 @@ function App() {
                     }
                 </div>
                 <div className="app_posts_right">
-
+                    <InstagramEmbed
+                        url='https://www.instagram.com/nimofy17_97/?hl=ru'
+                        maxWidth={320}
+                        hideCaption={false}
+                        containerTagName='div'
+                        protocol=''
+                        injectScript
+                        onLoading={() => {}}
+                        onSuccess={() => {}}
+                        onAfterRender={() => {}}
+                        onFailure={() => {}}
+                    />
                 </div>
 
             </div>
