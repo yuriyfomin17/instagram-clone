@@ -34,7 +34,7 @@ function App() {
     const [posts, setPosts] = useState([])
     const [open, setOpen] = useState(false)
     const [modalStyle] = useState(getModalStyle);
-
+    const [openSingIn, setOpenSignIn] = useState(false)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState('')
@@ -42,10 +42,22 @@ function App() {
 
     const signUp = (event) => {
         event.preventDefault()
-        auth.createUserWithEmailAndPassword(email, password)
+        auth.createUserWithEmailAndPassword(email, password).then((authUser) => {
+            return authUser.user.updateProfile({
+                displayName: username
+            })
+        })
             .catch((error) => alert(error.message))
     }
-
+    const signIn = (event) => {
+        event.preventDefault()
+        setPassword('')
+        setEmail('')
+        auth.signInWithEmailAndPassword(email, password).catch((error)=>{
+            alert(error.message)
+        })
+        setOpenSignIn(false)
+    }
     useEffect(() => {
 
         const unsubscribe = auth.onAuthStateChanged((authUser) => {
@@ -54,16 +66,6 @@ function App() {
                 console.log(authUser)
                 // cookie tracking => hence even if you refresh you still logged in
                 setUser(authUser)
-
-
-                if (authUser.displayName) {
-                    //dont update username
-                } else {
-                    // if we just created someone...
-                    return authUser.updateProfile({
-                        displayName: username
-                    })
-                }
             } else {
                 // if user is logged out...
                 setUser(null)
@@ -135,6 +137,43 @@ function App() {
 
 
             </Modal>
+            <Modal
+                open={openSingIn}
+                onClose={() => setOpenSignIn(false)}
+            >
+                <div style={modalStyle} className={classes.paper}>
+
+                    <form className="app_signup">
+                        <center>
+
+                            <img
+                                src={instagramLogo}
+                                className="app_headerImage"
+                                alt=""
+                            />
+                        </center>
+
+                        <Input
+                            placeholder="email"
+                            type="text"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <Input
+                            placeholder="password"
+                            type="text"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+
+                        <Button onClick={signIn}>Sign In</Button>
+                    </form>
+
+
+                </div>
+
+
+            </Modal>
 
             <div className="app_header">
                 <img
@@ -144,7 +183,13 @@ function App() {
                 />
 
             </div>
-            <Button onClick={() => setOpen(true)}> Sign Up</Button>
+            {user ? (<Button onClick={() => auth.signOut()}> Log Out</Button>) :
+                <div className="login_container">
+                    <Button onClick={() => setOpenSignIn(true)}> Sign In</Button>
+                    <Button onClick={() => setOpen(true)}> Sign Up</Button>
+                </div>
+
+            }
             <h1> Instagram clone</h1>
             {
                 posts.map(({id, post}) => (
