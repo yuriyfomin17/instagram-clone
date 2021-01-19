@@ -7,6 +7,9 @@ import {db, auth} from './Firebse'
 import Modal from '@material-ui/core/Modal';
 import {Button, Input} from "@material-ui/core";
 import ImageUpload from "./ImageUpload";
+import InstagramEmbed from 'react-instagram-embed';
+
+
 
 function getModalStyle() {
     const top = 50
@@ -84,7 +87,7 @@ function App() {
     // useEffect runs specific code based on the specific condition
 
     useEffect(() => {
-        db.collection('posts').orderBy('timestamp','desc').onSnapshot(snapshot => {
+        db.collection('posts').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
             // every time a new post is added , this code fires
             setPosts(snapshot.docs.map(doc => ({
                 id: doc.id,
@@ -95,10 +98,7 @@ function App() {
     console.log("POST", posts)
     return (
         <div className="app">
-            {user?.displayName ? (<ImageUpload username={user.displayName}/>
-            ) : (
-                <h3> Sorry you need to login</h3>
-            )}
+
 
             <Modal
                 open={open}
@@ -188,28 +188,46 @@ function App() {
                     className="app_headerImage"
                     alt=""
                 />
+                {user ? (<Button onClick={() => auth.signOut()}> Log Out</Button>) :
+                    <div className="login_container">
+                        <Button onClick={() => setOpenSignIn(true)}> Sign In</Button>
+                        <Button onClick={() => setOpen(true)}> Sign Up</Button>
+                    </div>
 
+                }
             </div>
-            {user ? (<Button onClick={() => auth.signOut()}> Log Out</Button>) :
-                <div className="login_container">
-                    <Button onClick={() => setOpenSignIn(true)}> Sign In</Button>
-                    <Button onClick={() => setOpen(true)}> Sign Up</Button>
+
+            <div className="app_posts">
+                <div className="app_posts_left">
+                    {
+                        posts.map(({id, post}) => (
+                            // keys allows to refresh only unique post
+                            <Post
+                                key={id}
+                                user={user}
+                                postId = {id}
+                                username={post.username}
+                                caption={post.caption}
+                                image={post.imageUrl}
+                            />
+                        ))
+                    }
+                </div>
+                <div className="app_posts_right">
+
                 </div>
 
-            }
-            <h1> Instagram clone</h1>
-            {
-                posts.map(({id, post}) => (
-                    // keys allows to refresh only unique post
-                    <Post
-                        key={id}
-                        username={post.username}
-                        caption={post.caption}
-                        image={post.imageUrl}
-                    />
-                ))
-            }
+            </div>
+
+
+
+            {user?.displayName ? (<ImageUpload username={user.displayName}/>
+            ) : (
+                <h3> Sorry you need to login</h3>
+            )}
+
         </div>
+
 
     );
 }
