@@ -3,7 +3,7 @@ import './App.css'
 import instagramLogo from './static/instagram-logo.png'
 import {makeStyles} from '@material-ui/core/styles';
 import Post from "./Post";
-import {db} from './Firebse'
+import {db, auth} from './Firebse'
 import Modal from '@material-ui/core/Modal';
 import {Button, Input} from "@material-ui/core";
 
@@ -38,10 +38,45 @@ function App() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState('')
+    const [user, setUser] = useState(null)
 
     const signUp = (event) => {
-
+        event.preventDefault()
+        auth.createUserWithEmailAndPassword(email, password)
+            .catch((error) => alert(error.message))
     }
+
+    useEffect(() => {
+
+        const unsubscribe = auth.onAuthStateChanged((authUser) => {
+            if (authUser) {
+                // user has logged in...
+                console.log(authUser)
+                // cookie tracking => hence even if you refresh you still logged in
+                setUser(authUser)
+
+
+                if (authUser.displayName) {
+                    //dont update username
+                } else {
+                    // if we just created someone...
+                    return authUser.updateProfile({
+                        displayName: username
+                    })
+                }
+            } else {
+                // if user is logged out...
+                setUser(null)
+            }
+
+        })
+        // changed user=> then perform clean up before firing useEffect again
+        // say we changed user ten times => without clean up we would have 10 listeners
+        return () => {
+            // perform some cleanup actions
+            unsubscribe();
+        }
+    }, [user, username])
 
     // useEffect runs specific code based on the specific condition
 
