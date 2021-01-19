@@ -9,7 +9,7 @@ function Post({username, caption, image}) {
             <div className="post_header">
                 <Avatar
                     className="post_avatar"
-                    alt='Yuriy Fomin'
+                    alt='user'
                     src={avatar}
                 />
                 <h3> {username} </h3>

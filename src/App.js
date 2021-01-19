@@ -6,6 +6,7 @@ import Post from "./Post";
 import {db, auth} from './Firebse'
 import Modal from '@material-ui/core/Modal';
 import {Button, Input} from "@material-ui/core";
+import ImageUpload from "./ImageUpload";
 
 function getModalStyle() {
     const top = 50
@@ -53,7 +54,7 @@ function App() {
         event.preventDefault()
         setPassword('')
         setEmail('')
-        auth.signInWithEmailAndPassword(email, password).catch((error)=>{
+        auth.signInWithEmailAndPassword(email, password).catch((error) => {
             alert(error.message)
         })
         setOpenSignIn(false)
@@ -83,7 +84,7 @@ function App() {
     // useEffect runs specific code based on the specific condition
 
     useEffect(() => {
-        db.collection('posts').onSnapshot(snapshot => {
+        db.collection('posts').orderBy('timestamp','desc').onSnapshot(snapshot => {
             // every time a new post is added , this code fires
             setPosts(snapshot.docs.map(doc => ({
                 id: doc.id,
@@ -91,8 +92,14 @@ function App() {
             })))
         })
     }, [])
+    console.log("POST", posts)
     return (
         <div className="app">
+            {user?.displayName ? (<ImageUpload username={user.displayName}/>
+            ) : (
+                <h3> Sorry you need to login</h3>
+            )}
+
             <Modal
                 open={open}
                 onClose={() => setOpen(false)}
@@ -198,7 +205,7 @@ function App() {
                         key={id}
                         username={post.username}
                         caption={post.caption}
-                        image={post.image}
+                        image={post.imageUrl}
                     />
                 ))
             }
